@@ -82,7 +82,42 @@ Decisions:
   and OpenAI API keep their Day-1 date but carry a `pricingNote` saying the
   2026-05-08 pass could not confirm them.
 
-## Day 2 — pending
+## Day 2 — 2026-05-09 — Audit Engine Architecture + Implementation Gap
+
+**Goal:** Implement deterministic audit engine with six business rules and comprehensive test coverage.
+
+**Architecture work completed:**
+- Finalized audit engine types and rule interface design
+- Defined six required business rules with deterministic logic:
+  - `overpriced-plan`: Cheaper plan within same tool covering team size + use case
+  - `excess-seats`: Seat count exceeds team size by >20%
+  - `overlapping-tools`: Two subscriptions in overlapping categories
+  - `cheaper-alternative`: Catalog lists comparable tool at lower cost
+  - `annual-discount`: Monthly billing where annual would save
+  - `credit-program`: User likely qualifies for startup/student/OSS credits
+- Designed evidence-driven findings with mandatory observed/expected fields
+- Planned deduplication strategy to prevent double-counting savings per tool
+- Engine sorting by severity then estimated monthly savings
+
+**Business reasoning work completed:**
+- False-positive prevention strategies (minimum savings thresholds, use-case compatibility)
+- Financial rationality framework (realistic savings calculations, market-aware recommendations)
+- Edge-case handling patterns (unknown tools/plans, zero-cost plans, billing cycle mismatches)
+- Rule interaction considerations (composite findings, per-tool deduplication)
+
+**Implementation status:**
+- ❌ **Critical gap:** Audit engine implementation files were NOT successfully persisted
+- ❌ `src/core/audit/engine.ts` missing (runAudit function, ENGINE_VERSION)
+- ❌ `src/core/audit/types.ts` missing (AuditInput, AuditResult, Finding, Evidence)
+- ❌ All six rule implementations missing (only test scaffolding exists)
+- ✅ Test framework ready and test files created
+- ✅ Catalog foundation solid and pricing verified
+
+**Root cause:** Architecture and reasoning work completed in design phase, but implementation work was not executed or persisted before end-of-day review.
+
+**Next day priority:** Complete audit engine implementation (4-6 hours estimated) before proceeding to Day 3.
+
+**Decision point:** End day cleanly with honest documentation rather than rushed late-night implementation.
 
 ## Day 3 — pending
 
