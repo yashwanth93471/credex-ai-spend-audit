@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { CATALOG } from "@/core/catalog";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { ErrorState } from "@/components/ui/error-state";
 
 type Subscription = {
   toolId: string;
@@ -91,8 +93,8 @@ export default function AuditFormPage() {
     }
   };
 
-  const isValid = teamSize > 0 && subscriptions.length > 0 &&
-    subscriptions.every((sub) => sub.seats > 0 && sub.monthlySpendUsd >= 0);
+  const isValid = teamSize > 0 && teamSize <= 1000 && subscriptions.length > 0 && subscriptions.length <= 20 &&
+    subscriptions.every((sub) => sub.seats > 0 && sub.seats <= 500 && sub.monthlySpendUsd >= 0);
 
   return (
     <div className="min-h-screen bg-zinc-50 py-12 px-4">
@@ -103,26 +105,29 @@ export default function AuditFormPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-            {error}
-          </div>
+          <ErrorState
+            title="Failed to Create Audit"
+            message={error}
+            onRetry={() => setError(null)}
+          />
         )}
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-zinc-200 p-6 space-y-6">
           {/* Team Size */}
           <div>
             <label className="block text-sm font-medium text-zinc-700 mb-2">
-              Team Size
+              Team Size <span className="text-zinc-400 font-normal">(1-1000 people)</span>
             </label>
             <input
               type="number"
               min="1"
+              max="1000"
               value={teamSize}
               onChange={(e) => setTeamSize(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={isSubmitting}
+              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               required
             />
-            <p className="mt-1 text-xs text-zinc-500">Total number of people in your organization</p>
           </div>
 
           {/* Primary Use Case */}
@@ -264,9 +269,16 @@ export default function AuditFormPage() {
           <button
             type="submit"
             disabled={!isValid || isSubmitting}
-            className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
-            {isSubmitting ? "Analyzing..." : "Run Audit"}
+            {isSubmitting ? (
+              <>
+                <LoadingSpinner size="sm" />
+                <span>Analyzing your stack...</span>
+              </>
+            ) : (
+              "Run Audit"
+            )}
           </button>
 
           <p className="text-xs text-center text-zinc-500">
