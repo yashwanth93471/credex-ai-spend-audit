@@ -3,7 +3,7 @@ import { z } from "zod";
 const serverSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  ANTHROPIC_API_KEY: z.string().startsWith("sk-ant-").optional(),
+  ANTHROPIC_API_KEY: z.string().optional(),
   RESEND_API_KEY: z.string().startsWith("re_").optional(),
   RESEND_FROM_EMAIL: z.string().email().optional(),
 });

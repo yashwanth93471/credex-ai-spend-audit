@@ -8,6 +8,18 @@ import { CATALOG } from "@/core/catalog";
 import { EmailCapture } from "./email-capture";
 import { LoadingPage } from "@/components/ui/loading";
 
+type AuditRecord = {
+  id: string;
+  inputs: unknown;
+  result: AuditResult;
+  summary: string;
+  summary_source: "llm" | "fallback";
+  savings_usd: number;
+  engine_version: string;
+  created_at: string;
+  claimed_at: string | null;
+};
+
 interface SeverityBadgeProps {
   severity: Finding["severity"];
 }
@@ -48,17 +60,7 @@ async function getAudit(id: string) {
     return null;
   }
 
-  return data as {
-    id: string;
-    inputs: unknown;
-    result: AuditResult;
-    summary: string;
-    summary_source: "llm" | "fallback";
-    savings_usd: number;
-    engine_version: string;
-    created_at: string;
-    claimed_at: string | null;
-  };
+  return data as AuditRecord;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
