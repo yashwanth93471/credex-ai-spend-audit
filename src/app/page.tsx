@@ -185,13 +185,27 @@ export default function HomePage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-24 text-center text-sm text-zinc-500">
+        <div className="mt-24 border-t border-zinc-200 pt-10 text-center text-sm text-zinc-500">
           <p>Built with Next.js 15, Supabase, and TypeScript.</p>
-          <p className="mt-2">
+          <p className="mt-3 text-zinc-700 font-medium">
+            Buddi Yashwanth Sai &mdash;{" "}
+            <a href="mailto:saiyashwanth306@gmail.com" className="text-blue-600 hover:text-blue-700">
+              saiyashwanth306@gmail.com
+            </a>
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-6">
             <a href="https://github.com/yashwanth93471/credex-ai-spend-audit" className="text-blue-600 hover:text-blue-700">
               View Source
             </a>
-          </p>
+            <a
+              href="https://digitalheroesco.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-4 py-2 border border-zinc-300 rounded-lg text-zinc-700 font-medium hover:bg-zinc-100 hover:border-zinc-400 transition-colors"
+            >
+              Built for Digital Heroes
+            </a>
+          </div>
         </div>
       </div>
     </div>
