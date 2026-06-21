@@ -84,8 +84,21 @@ export default function AuditFormPage() {
         throw new Error(text || "Failed to create audit");
       }
 
-      const { id } = await response.json();
-      window.location.href = `/audit/${id}`;
+      const data = await response.json();
+
+      if (data.persisted === false) {
+        sessionStorage.setItem(
+          "audit-fallback",
+          JSON.stringify({
+            result: data.result,
+            summary: data.summary,
+            summarySource: data.summarySource,
+          })
+        );
+        window.location.href = "/audit/preview";
+      } else {
+        window.location.href = `/audit/${data.id}`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

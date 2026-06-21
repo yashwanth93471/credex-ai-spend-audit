@@ -49,31 +49,34 @@ export async function POST(request: NextRequest) {
       primaryUseCase: input.primaryUseCase,
     });
 
-    const supabase = createServerClient();
+    // Persist to Supabase — non-blocking: if this fails the audit result is
+    // returned inline so the user still receives their report.
+    try {
+      const supabase = createServerClient();
 
-    // Insert audit record (no lead yet - that's Day 4)
-    const { data: auditData, error: auditError } = await supabase
-      .from("audits")
-      .insert({
-        inputs: input,
-        result,
-        summary,
-        summary_source: summarySource,
-        savings_usd: result.totalMonthlySavingsUsd,
-        engine_version: result.engineVersion,
-      })
-      .select("id")
-      .single();
+      const { data: auditData, error: auditError } = await supabase
+        .from("audits")
+        .insert({
+          inputs: input,
+          result,
+          summary,
+          summary_source: summarySource,
+          savings_usd: result.totalMonthlySavingsUsd,
+          engine_version: result.engineVersion,
+        })
+        .select("id")
+        .single();
 
-    if (auditError) {
-      console.error("Supabase insert error:", auditError);
+      if (auditError) throw auditError;
+
+      return NextResponse.json({ id: auditData.id, persisted: true }, { status: 201 });
+    } catch (persistError) {
+      console.error("Supabase persistence error (non-fatal):", persistError);
       return NextResponse.json(
-        { error: "Failed to save audit" },
-        { status: 500 }
+        { persisted: false, result, summary, summarySource },
+        { status: 200 }
       );
     }
-
-    return NextResponse.json({ id: auditData.id }, { status: 201 });
   } catch (error) {
     console.error("Audit creation error:", error);
     return NextResponse.json(
